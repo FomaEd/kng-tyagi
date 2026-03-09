@@ -12,15 +12,8 @@
     .field { margin-bottom: 14px; }
     label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: 600; }
     input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; background: #fff; color: #111; }
-    button { width: 100%; padding: 14px; margin-top: 8px; background: #2481cc; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    button { width: 100%; padding: 14px; margin-top: 8px; background: #2481cc; color: #fff !important; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
     button:active { opacity: 0.8; }
-    #result { display: none; margin-top: 20px; padding: 14px; background: #1e1e1e; border-radius: 10px; border: 1px solid #444; }
-    #result h3 { color: #5cb3ff; margin-bottom: 10px; font-size: 15px; }
-    #result ul { padding-left: 18px; }
-    #result li { margin-bottom: 6px; font-size: 15px; color: #ffffff; }
-    #result li b { color: #ffffff; }
-    .note { color: #ffaa44; font-size: 13px; margin-top: 10px; }
-    .error { color: #ff5555; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -31,9 +24,14 @@
   <div class="field"><label>Тип редуктора</label><select id="reducer"><option value="vilka">Переходник (Вилка)</option><option value="torx">Под TORX штифт</option><option value="4gran">Под 4-х гран. штифт</option></select></div>
   <div class="field"><label>Тип петель</label><select id="hinges"><option value="visible">Видимые</option><option value="hidden90">Скрытые 90&#176;</option><option value="hidden180">Скрытые 180&#176;</option></select></div>
   <button onclick="calculate()">Рассчитать</button>
-  <div id="result"></div>
+  <div id="result" style="display:none;margin-top:20px;padding:14px;background:#1a1a2e;border-radius:10px;border:2px solid #2481cc;"></div>
   <script>
     if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+    var RS = 'style="color:#ffffff;font-size:15px;margin-bottom:6px;"';
+    var HS = 'style="color:#5cb3ff;font-size:15px;font-weight:bold;margin-bottom:8px;margin-top:10px;"';
+    var NS = 'style="color:#ffaa44;font-size:13px;margin-top:10px;"';
+    var ES = 'style="color:#ff5555;font-weight:bold;font-size:15px;"';
+    function row(k, v) { return '<div ' + RS + '><b style="color:#ffffff;">' + k + '</b> = ' + v + ' мм</div>'; }
     function calculate() {
       var W = parseFloat(document.getElementById('W').value);
       var H = parseFloat(document.getElementById('H').value);
@@ -42,7 +40,7 @@
       var hinges = document.getElementById('hinges').value;
       var div = document.getElementById('result');
       div.style.display = 'block';
-      if (!W || !H || !HC || W<=0 || H<=0 || HC<=0) { div.innerHTML = '<p class="error">Заполни все поля!</p>'; return; }
+      if (!W || !H || !HC || W<=0 || H<=0 || HC<=0) { div.innerHTML = '<p ' + ES + '>Заполни все поля!</p>'; return; }
       var C1 = { vilka: { visible: 170, hidden90: 170, hidden180: 75 }, torx: { visible: 205, hidden90: 205, hidden180: 225 }, '4gran': { visible: 248, hidden90: 248, hidden180: 248 } };
       var c1 = C1[reducer][hinges];
       var html = '';
@@ -61,10 +59,10 @@
         if (W >= 445 && W <= 700 && H <= 3000) { narrow = [['L1', HC-c1], ['L2', H-HC-c1], ['L3', W-410]]; if (H < 2400) narrow.push(['L4', H-180]); else narrow.push(['L4*', Math.round(H/2)-180]); notes.push('⚠️ Поворотно-откидной режим (H13)'); notes.push('⚠️ Откидно-поворотный: доп. тяга = 215 мм (H14)'); }
         if (W >= 701 && W <= 1600 && H <= 3000) { wide = [['L1', HC-c1], ['L2', H-HC-c1]]; if (W <= 1200) wide.push(['L3', W-528]); else wide.push(['L3*', W-688]); if (H < 2400) wide.push(['L4', Math.round(H/2)-180]); else wide.push(['L4*', Math.round(H/3)-180]); wide.push(['L5', W-250]); notes.push('⚠️ Поворотно-откидной режим (H13)'); notes.push('⚠️ Откидно-поворотный: доп. тяга = 215 мм (H14)'); }
       }
-      if (narrow) { html += '<h3>&#128208; Ширина узкая</h3><ul>'; for (var i=0; i<narrow.length; i++) html += '<li><b>'+narrow[i][0]+'</b> = '+narrow[i][1]+' мм</li>'; html += '</ul>'; }
-      if (wide) { html += '<h3>&#128208; Ширина широкая</h3><ul>'; for (var j=0; j<wide.length; j++) html += '<li><b>'+wide[j][0]+'</b> = '+wide[j][1]+' мм</li>'; html += '</ul>'; }
-      for (var k=0; k<notes.length; k++) html += '<p class="note">'+notes[k]+'</p>';
-      if (!narrow && !wide) html = '<p class="error">Размеры вне допустимого диапазона.</p>';
+      if (narrow) { html += '<p ' + HS + '>&#128208; Ширина узкая</p>'; for (var i=0; i<narrow.length; i++) html += row(narrow[i][0], narrow[i][1]); }
+      if (wide) { html += '<p ' + HS + '>&#128208; Ширина широкая</p>'; for (var j=0; j<wide.length; j++) html += row(wide[j][0], wide[j][1]); }
+      for (var k=0; k<notes.length; k++) html += '<p ' + NS + '>'+notes[k]+'</p>';
+      if (!narrow && !wide) html = '<p ' + ES + '>Размеры вне допустимого диапазона.</p>';
       div.innerHTML = html;
     }
   </script>
