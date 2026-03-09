@@ -1,6 +1,6 @@
 const TelegramBot = require('node-telegram-bot-api');
 
-const token = '7987954302:AAFG1Tt9GwcPM111pi3TVBUo1AqN-pdoyuU';
+const token = '7987954302:AAFG1Tt9GwcPMl11pi3TVBUo1AqN-pdoyuU';
 
 const bot = new TelegramBot(token, { polling: true });
 
@@ -9,7 +9,7 @@ bot.onText(/\/start/, (msg) => {
 
   bot.sendMessage(
     chatId,
-    'Привет! Это калькулятор фурнитурных тяг. Нажми кнопку ниже, чтобы открыть мини-приложение.',
+    'Привет! Это калькулятор фурнитурных тяг KNG. Нажми кнопку ниже, чтобы открыть мини-приложение.',
     {
       reply_markup: {
         keyboard: [
