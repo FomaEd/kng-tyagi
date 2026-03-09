@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Калькулятор тяг</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: sans-serif; padding: 16px; background: #f5f5f5; }
+    .field { margin-bottom: 12px; }
+    label { display: block; margin-bottom: 4px; }
+    input, select, button { width: 100%; padding: 8px; box-sizing: border-box; }
+    button { margin-top: 16px; }
+    .result { margin-top: 20px; padding: 10px; background: #fff; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h2>Калькулятор фурнитурных тяг</h2>
+
+  <div class="field">
+    <label>Ширина створки (мм)</label>
+    <input id="width" type="number" />
+  </div>
+
+  <div class="field">
+    <label>Высота створки H (мм)</label>
+    <input id="height" type="number" />
+  </div>
+
+  <div class="field">
+    <label>Высота ручки HC (мм)</label>
+    <input id="handleHeight" type="number" />
+  </div>
+
+  <div class="field">
+    <label>Тип редуктора</label>
+    <select id="reducerType">
+      <option value="Переходник (Вилка)">Переходник (Вилка)</option>
+      <option value="Редуктор под 4-х гран. штифт">Редуктор под 4-х гран. штифт</option>
+      <option value="Редуктор под TORX штифт">Редуктор под TORX штифт</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Тип петель</label>
+    <select id="hingeType">
+      <option value="Видимые">Видимые</option>
+      <option value="Скрытые 90">Скрытые 90</option>
+      <option value="Скрытые 180">Скрытые 180</option>
+    </select>
+  </div>
+
+  <button id="calcBtn">Рассчитать</button>
+
+  <div id="result" class="result" style="display:none;"></div>
+
+  <script>
+    const btn = document.getElementById('calcBtn');
+    const resultEl = document.getElementById('result');
+
+    btn.addEventListener('click', () => {
+      const width = Number(document.getElementById('width').value);
+      const height = Number(document.getElementById('height').value);
+      const handleHeight = Number(document.getElementById('handleHeight').value);
+      const reducerType = document.getElementById('reducerType').value;
+      const hingeType = document.getElementById('hingeType').value;
+
+      // пока заглушка: просто покажем введённые данные
+      resultEl.style.display = 'block';
+      resultEl.innerText =
+        'Ширина: ' + width +
+        '\\nВысота: ' + height +
+        '\\nHC: ' + handleHeight +
+        '\\nРедуктор: ' + reducerType +
+        '\\nПетли: ' + hingeType +
+        '\\n\\n(Логика расчёта подключим на следующем шаге)';
+    });
+  </script>
+</body>
+</html>
