@@ -118,9 +118,9 @@
       }
 
       var C1 = {
-        vilka:    { visible: 170, hidden90: 170, hidden180: 75 },
-        torx:     { visible: 205, hidden90: 205, hidden180: 225 },
-        '4gran':  { visible: 248, hidden90: 248, hidden180: 248 }
+        vilka:   { visible: 170, hidden90: 170, hidden180: 75 },
+        torx:    { visible: 205, hidden90: 205, hidden180: 225 },
+        '4gran': { visible: 248, hidden90: 248, hidden180: 248 }
       };
       var c1 = C1[reducer][hinges];
 
@@ -133,19 +133,19 @@
       if (hinges === 'visible') {
         if (W >= 390 && W <= 700 && H <= 3000) {
           narrow = [
-            ['L1',  HC - c1],
-            ['L2',  H - HC - c1],
-            ['L3',  HC - c1],
-            ['L4',  HC - c1]
+            ['L1', HC - c1],
+            ['L2', H - HC - c1],
+            ['L3', HC - c1],
+            ['L4', HC - c1]
           ];
         }
         if (W >= 701 && W <= 1600 && H <= 3000) {
           wide = [
-            ['L1',  HC - c1],
-            ['L2',  H - HC - c1],
-            ['L3',  W - 495],
-            ['L4',  Math.round(H / 2) - 180],
-            ['L5',  W - 180]
+            ['L1', HC - c1],
+            ['L2', H - HC - c1],
+            ['L3', W - 495],
+            ['L4', Math.round(H / 2) - 180],
+            ['L5', W - 180]
           ];
         }
       }
@@ -159,7 +159,7 @@
             ['L3', W - 357]
           ];
           if (H < 2400) {
-            narrow.push(['L4',  H - 180]);
+            narrow.push(['L4', H - 180]);
           } else {
             narrow.push(['L4*', Math.round(H / 2) - 180]);
           }
@@ -171,12 +171,12 @@
             ['L2', H - HC - c1]
           ];
           if (W <= 1200) {
-            wide.push(['L3',  W - 547]);
+            wide.push(['L3', W - 547]);
           } else {
             wide.push(['L3*', W - 707]);
           }
           if (H < 2400) {
-            wide.push(['L4',  Math.round(H / 2) - 180]);
+            wide.push(['L4', Math.round(H / 2) - 180]);
           } else {
             wide.push(['L4*', Math.round(H / 3) - 180]);
           }
@@ -184,31 +184,33 @@
         }
       }
 
-      // Скрытые 180°
+      // Скрытые 180° — общий принцип для всех редукторов
       if (hinges === 'hidden180') {
         // Узкая створка
         if (W >= 445 && W <= 700 && H <= 3000) {
           narrow = [
             ['L1', HC - c1],
-            ['L2', H - HC - c1],
-            ['L3', W - 410]
+            ['L2', H - HC - c1]
           ];
+
+          // базовый L3: для всех трёх редукторов одинаковая формула по текущим данным
+          var baseNarrowL3 = W - 410;
+          narrow.push(['L3', baseNarrowL3]);
+
           if (H < 2400) {
-            narrow.push(['L4',  H - 180]);
+            narrow.push(['L4', H - 180]);
           } else {
             narrow.push(['L4*', Math.round(H / 2) - 180]);
           }
 
-          // Вместо общих notes — два отдельных значения L3* с комментариями
-          // H13: поворотно-откидной
+          // ДВА отдельных значения L3* с комментариями H13 / H14
           narrow.push([
             'L3*',
-            (W - 410) + ' мм — Поворотно-откидной режим (H13)'
+            baseNarrowL3 + ' — Поворотно-откидной режим (H13)'
           ]);
-          // H14: откидно-поворотный, доп. тяга = 215 мм
           narrow.push([
             'L3*',
-            (W - 410 + 215) + ' мм — Откидно-поворотный: доп. тяга = 215 мм (H14)'
+            (baseNarrowL3 + 215) + ' — Откидно-поворотный: доп. тяга = 215 мм (H14)'
           ]);
         }
 
@@ -219,31 +221,33 @@
             ['L2', H - HC - c1]
           ];
 
-          var baseL3;
+          var baseWideL3;
+
+          // По таблицам для всех трёх редукторов логика одинаковая:
           if (W <= 1200) {
-            baseL3 = W - 528;
-            wide.push(['L3', baseL3]);
+            baseWideL3 = W - 528;
+            wide.push(['L3', baseWideL3]);
           } else {
-            baseL3 = W - 688;
-            wide.push(['L3*', baseL3]);
+            baseWideL3 = W - 688;
+            wide.push(['L3*', baseWideL3]);
           }
 
           if (H < 2400) {
-            wide.push(['L4',  Math.round(H / 2) - 180]);
+            wide.push(['L4', Math.round(H / 2) - 180]);
           } else {
             wide.push(['L4*', Math.round(H / 3) - 180]);
           }
 
           wide.push(['L5', W - 250]);
 
-          // Здесь тоже делаем два отдельных L3* с комментариями
+          // ДВА значения L3* с комментариями H13 / H14
           wide.push([
             'L3*',
-            baseL3 + ' мм — Поворотно-откидной режим (H13)'
+            baseWideL3 + ' — Поворотно-откидной режим (H13)'
           ]);
           wide.push([
             'L3*',
-            (baseL3 + 215) + ' мм — Откидно-поворотный: доп. тяга = 215 мм (H14)'
+            (baseWideL3 + 215) + ' — Откидно-поворотный: доп. тяга = 215 мм (H14)'
           ]);
         }
       }
@@ -265,7 +269,7 @@
         html += '</ul>';
       }
 
-      // notes теперь используются только для других случаев, не для скрытых 180°
+      // notes оставляем на будущее, сейчас для скрытых 180° они не используются
       for (var k = 0; k < notes.length; k++) {
         html += '<p class="note">' + notes[k] + '</p>';
       }
