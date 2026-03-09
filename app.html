@@ -191,4 +191,78 @@
           var baseNarrowL3 = W - 410;
 
           narrow = [
-            ['L1', HC
+            ['L1', HC - c1],
+            ['L2', H - HC - c1],
+
+            // два варианта L3* сразу после L2
+            ['L3*', baseNarrowL3      + ' — Поворотно-откидной режим (H13)'],
+            ['L3*', (baseNarrowL3+215) + ' — Откидно-поворотный: доп. тяга = 215 мм (H14)']
+          ];
+
+          if (H < 2400) {
+            narrow.push(['L4', H - 180]);
+          } else {
+            narrow.push(['L4*', Math.round(H / 2) - 180]);
+          }
+        }
+
+        // Широкая створка
+        if (W >= 701 && W <= 1600 && H <= 3000) {
+          var baseWideL3;
+
+          if (W <= 1200) {
+            baseWideL3 = W - 528;
+          } else {
+            baseWideL3 = W - 688;
+          }
+
+          wide = [
+            ['L1', HC - c1],
+            ['L2', H - HC - c1],
+
+            // два варианта L3* сразу после L2
+            ['L3*', baseWideL3      + ' — Поворотно-откидной режим (H13)'],
+            ['L3*', (baseWideL3+215) + ' — Откидно-поворотный: доп. тяга = 215 мм (H14)']
+          ];
+
+          if (H < 2400) {
+            wide.push(['L4', Math.round(H / 2) - 180]);
+          } else {
+            wide.push(['L4*', Math.round(H / 3) - 180]);
+          }
+
+          wide.push(['L5', W - 250]);
+        }
+      }
+
+      // Формирование HTML
+      if (narrow) {
+        html += '<h3>&#128208; Ширина узкая</h3><ul>';
+        for (var i = 0; i < narrow.length; i++) {
+          html += '<li><b>' + narrow[i][0] + '</b> = ' + narrow[i][1] + ' мм</li>';
+        }
+        html += '</ul>';
+      }
+
+      if (wide) {
+        html += '<h3>&#128208; Ширина широкая</h3><ul>';
+        for (var j = 0; j < wide.length; j++) {
+          html += '<li><b>' + wide[j][0] + '</b> = ' + wide[j][1] + ' мм</li>';
+        }
+        html += '</ul>';
+      }
+
+      // notes пока не используем
+      for (var k = 0; k < notes.length; k++) {
+        html += '<p class="note">' + notes[k] + '</p>';
+      }
+
+      if (!narrow && !wide) {
+        html = '<p class="error">Размеры вне допустимого диапазона.</p>';
+      }
+
+      div.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
