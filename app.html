@@ -193,10 +193,8 @@
           narrow = [
             ['L1', HC - c1],
             ['L2', H - HC - c1],
-
-            // два варианта L3* сразу после L2
-            ['L3*', baseNarrowL3      + ' мм — Поворотно-откидной режим '],
-            ['L3*', (baseNarrowL3+215) + ' мм — Откидно-поворотный режим + доп. тяга = 215 мм ']
+            ['L3*', baseNarrowL3      + ' мм — Поворотно-откидной режим'],
+            ['L3*', (baseNarrowL3+215) + ' мм — Откидно-поворотный режим: доп. тяга = 215 мм']
           ];
 
           if (H < 2400) {
@@ -219,10 +217,8 @@
           wide = [
             ['L1', HC - c1],
             ['L2', H - HC - c1],
-
-            // два варианта L3* сразу после L2
-            ['L3*', baseWideL3      + ' мм — Поворотно-откидной режим '],
-            ['L3*', (baseWideL3+215) + ' мм — Откидно-поворотный режим + доп. тяга = 215 мм ']
+            ['L3*', baseWideL3      + ' мм — Поворотно-откидной режим'],
+            ['L3*', (baseWideL3+215) + ' мм — Откидно-поворотный режим: доп. тяга = 215 мм']
           ];
 
           if (H < 2400) {
@@ -235,11 +231,16 @@
         }
       }
 
-      // Формирование HTML
+      // Формирование HTML (без лишних "мм")
       if (narrow) {
         html += '<h3>&#128208; Ширина узкая</h3><ul>';
         for (var i = 0; i < narrow.length; i++) {
-          html += '<li><b>' + narrow[i][0] + '</b> = ' + narrow[i][1] + ' мм</li>';
+          var nameN = narrow[i][0];
+          var valN  = narrow[i][1];
+          if (typeof valN === 'number') {
+            valN = valN + ' мм';
+          }
+          html += '<li><b>' + nameN + '</b> = ' + valN + '</li>';
         }
         html += '</ul>';
       }
@@ -247,14 +248,14 @@
       if (wide) {
         html += '<h3>&#128208; Ширина широкая</h3><ul>';
         for (var j = 0; j < wide.length; j++) {
-          html += '<li><b>' + wide[j][0] + '</b> = ' + wide[j][1] + ' мм</li>';
+          var nameW = wide[j][0];
+          var valW  = wide[j][1];
+          if (typeof valW === 'number') {
+            valW = valW + ' мм';
+          }
+          html += '<li><b>' + nameW + '</b> = ' + valW + '</li>';
         }
         html += '</ul>';
-      }
-
-      // notes пока не используем
-      for (var k = 0; k < notes.length; k++) {
-        html += '<p class="note">' + notes[k] + '</p>';
       }
 
       if (!narrow && !wide) {
