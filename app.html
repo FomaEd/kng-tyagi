@@ -134,7 +134,7 @@
             ['L1', HC - c1],
             ['L2', H - HC - c1],
             ['L3', HC - c1],
-            ['L4', HC - c1]
+            ['L4', H / 2 - 180]       // общая формула L4
           ];
         }
         if (W >= 701 && W <= 1600 && H <= 3000) {
@@ -142,7 +142,7 @@
             ['L1', HC - c1],
             ['L2', H - HC - c1],
             ['L3', W - 495],
-            ['L4', Math.round(H / 2) - 180],
+            ['L4', H / 2 - 180],      // общая формула L4
             ['L5', W - 180]
           ];
         }
@@ -157,9 +157,9 @@
             ['L3', W - 357]
           ];
           if (H < 2400) {
-            narrow.push(['L4', H - 180]);
+            narrow.push(['L4', H / 2 - 180]);   // L4
           } else {
-            narrow.push(['L4*', Math.round(H / 2) - 180]);
+            narrow.push(['L4*', H - 800]);      // L4*
           }
         }
 
@@ -174,15 +174,15 @@
             wide.push(['L3*', W - 707]);
           }
           if (H < 2400) {
-            wide.push(['L4', Math.round(H / 2) - 180]);
+            wide.push(['L4', H / 2 - 180]);     // L4
           } else {
-            wide.push(['L4*', Math.round(H / 3) - 180]);
+            wide.push(['L4*', H - 800]);        // L4*
           }
           wide.push(['L5', W - 180]);
         }
       }
 
-      // Скрытые 180° — единая структура, разные формулы L2
+      // Скрытые 180°
       if (hinges === 'hidden180') {
         // Смещения для L2 по типу редуктора
         var l2Offset;
@@ -203,9 +203,9 @@
           ];
 
           if (H < 2400) {
-            narrow.push(['L4', H - 180]);
+            narrow.push(['L4', H / 2 - 180]);   // L4
           } else {
-            narrow.push(['L4*', Math.round(H / 2) - 180]);
+            narrow.push(['L4*', H - 800]);      // L4*
           }
         }
 
@@ -229,9 +229,9 @@
           }
 
           if (H < 2400) {
-            wide.push(['L4', Math.round(H / 2) - 180]);
+            wide.push(['L4', H / 2 - 180]);     // L4
           } else {
-            wide.push(['L4*', Math.round(H / 3) - 180]);
+            wide.push(['L4*', H - 800]);        // L4*
           }
 
           wide.push(['L5', W - 250]);
