@@ -52,7 +52,6 @@
     #result ul { padding-left: 18px; }
     #result li { margin-bottom: 6px; font-size: 15px; color: #ffffff; }
     #result li b { color: #ffffff; }
-    .note { color: #ffaa44; font-size: 13px; margin-top: 10px; }
     .error { color: #ff5555; font-weight: bold; }
   </style>
 </head>
@@ -127,7 +126,6 @@
       var html = '';
       var narrow = null;
       var wide   = null;
-      var notes  = [];
 
       // Видимые петли
       if (hinges === 'visible') {
@@ -184,14 +182,23 @@
         }
       }
 
-      // Скрытые 180° — единая логика для Вилки, TORX, 4-гран
+      // Скрытые 180° — единая структура, разные формулы L2
       if (hinges === 'hidden180') {
+        // Смещения для L2 по типу редуктора
+        var l2Offset;
+        if (reducer === 'vilka') {
+          l2Offset = 170;
+        } else if (reducer === 'torx') {
+          l2Offset = 205;
+        } else if (reducer === '4gran') {
+          l2Offset = 228;
+        }
 
-        // Узкая створка 445–700: как раньше, без L3*
+        // Узкая створка 445–700
         if (W >= 445 && W <= 700 && H <= 3000) {
           narrow = [
             ['L1', HC - c1],
-            ['L2', H - HC - 170],
+            ['L2', H - HC - l2Offset],
             ['L3', W - 410]
           ];
 
@@ -206,20 +213,19 @@
         if (W >= 701 && W <= 1600 && H <= 3000) {
           wide = [
             ['L1', HC - c1],
-            ['L2', H - HC - 170]
+            ['L2', H - HC - l2Offset]
           ];
 
           if (W <= 1200) {
-            // Диапазон 701–1200 → только L3 (без звёздочки, без комментариев)
+            // 701–1200 → только L3 без звёздочки
             var baseL3 = W - 528;
             wide.push(['L3', baseL3]);
-                    } else {
-            // Диапазон 1201–1600 → два L3* с общей формулой
-            var l3_first  = W - 688;  // формула как в H13
-            var l3_second = W - 940;  // формула как в H14 (общая для всех трёх листов)
-
+          } else {
+            // 1201–1600 → два L3* по формулам H13/H14
+            var l3_first  = W - 688; // H13
+            var l3_second = W - 940; // H14
             wide.push(['L3*', l3_first  + ' мм — Поворотно-откидной режим']);
-            wide.push(['L3*', l3_second + ' мм — Откидно-поворотный режим. + доп. тяга = 215 мм']);
+            wide.push(['L3*', l3_second + ' мм — Откидно-поворотный режим: доп. тяга = 215 мм']);
           }
 
           if (H < 2400) {
@@ -232,7 +238,7 @@
         }
       }
 
-      // Формирование HTML (автоматическое "мм" только для чисел)
+      // Формирование HTML (мм добавляем только к числам)
       if (narrow) {
         html += '<h3>&#128208; Ширина узкая</h3><ul>';
         for (var i = 0; i < narrow.length; i++) {
