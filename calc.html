@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Калькулятор тяг</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 16px;
+      background: var(--tg-theme-bg-color, #f5f5f5);
+      color: var(--tg-theme-text-color, #000);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    h2 { text-align: center; margin-bottom: 20px; font-size: 18px; }
+    .field { margin-bottom: 14px; }
+    label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: 600; }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      background: #fff;
+      color: #111;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 8px;
+      background: #2481cc;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:active { opacity: 0.8; }
+    #result {
+      display: none;
+      margin-top: 20px;
+      padding: 14px;
+      background: #1e1e1e;
+      border-radius: 10px;
+      border: 1px solid #444;
+    }
+    #result h3 { color: #5cb3ff; margin-bottom: 10px; font-size: 15px; }
+    #result ul { padding-left: 18px; }
+    #result li { margin-bottom: 6px; font-size: 15px; color: #ffffff; }
+    #result li b { color: #ffffff; }
+    .note { color: #ffaa44; font-size: 13px; margin-top: 10px; }
+    .error { color: #ff5555; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>&#128296; Расчёт длин тяг</h2>
+
+  <div class="field">
+    <label>Ширина створки W (мм)</label>
+    <input id="W" type="number" inputmode="numeric" placeholder="600" />
+  </div>
+
+  <div class="field">
+    <label>Высота створки H (мм)</label>
+    <input id="H" type="number" inputmode="numeric" placeholder="2000" />
+  </div>
+
+  <div class="field">
+    <label>Высота ручки HC (мм)</label>
+    <input id="HC" type="number" inputmode="numeric" placeholder="900" />
+  </div>
+
+  <div class="field">
+    <label>Тип редуктора</label>
+    <select id="reducer">
+      <option value="vilka">Переходник (Вилка)</option>
+      <option value="torx">Под TORX штифт</option>
+      <option value="4gran">Под 4-х гран. штифт</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Тип петель</label>
+    <select id="hinges">
+      <option value="visible">Видимые</option>
+      <option value="hidden90">Скрытые 90&#176;</option>
+      <option value="hidden180">Скрытые 180&#176;</option>
+    </select>
+  </div>
+
+  <button onclick="calculate()">Рассчитать</button>
+
+  <div id="result"></div>
+
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+
+    function calculate() {
+      var W = parseFloat(document.getElementById('W').value);
+      var H = parseFloat(document.getElementById('H').value);
+      var HC = parseFloat(document.getElementById('HC').value);
+      var reducer = document.getElementById('reducer').value;
+      var hinges = document.getElementById('hinges').value;
+
+      var div = document.getElementById('result');
+      div.style.display = 'block';
+
+      if (!W || !H || !HC || W <= 0 || H <= 0 || HC <= 0) {
+        div.innerHTML = '<p class="error">Заполни все поля!</p>';
+        return;
+      }
+
+      var C1 = {
+        vilka:   { visible: 170, hidden90: 170, hidden180: 75 },
+        torx:    { visible: 205, hidden90: 205, hidden180: 225 },
+        '4gran': { visible: 248, hidden90: 248, hidden180: 248 }
+      };
+      var c1 = C1[reducer][hinges];
+
+      var html = '';
+      var narrow = null;
+      var wide   = null;
+      var notes  = [];
+
+      // Видимые петли
+      if (hinges === 'visible') {
+        if (W >= 390 && W <= 700 && H <= 3000) {
+          narrow = [
+            ['L1', HC - c1],
+            ['L2', H - HC - c1],
+            ['L3', HC - c1],
+            ['L4', HC - c1]
+          ];
+        }
+        if (W >= 701 && W <= 1600 && H <= 3000) {
+          wide = [
+            ['L1', HC - c1],
+            ['L2', H - HC - c1],
+            ['L3', W - 495],
+            ['L4', Math.round(H / 2) - 180],
+            ['L5', W - 180]
+          ];
+        }
+      }
+
+      // Скрытые 90°
+      if (hinges === 'hidden90') {
+        if (W >= 390 && W <= 700 && H <= 3000) {
+          narrow = [
+            ['L1', HC - c1],
+            ['L2', H - HC - c1],
+            ['L3', W - 357]
+          ];
+          if (H < 2400) {
+            narrow.push(['L4', H - 180]);
+          } else {
+            narrow.push(['L4*', Math.round(H / 2) - 180]);
+          }
+        }
+
+        if (W >= 701 && W <= 1600 && H <= 3000) {
+          wide = [
+            ['L1', HC - c1],
+            ['L2', H - HC - c1]
+          ];
+          if (W <= 1200) {
+            wide.push(['L3', W - 547]);
+          } else {
+            wide.push(['L3*', W - 707]);
+          }
+          if (H < 2400) {
+            wide.push(['L4', Math.round(H / 2) - 180]);
+          } else {
+            wide.push(['L4*', Math.round(H / 3) - 180]);
+          }
+          wide.push(['L5', W - 180]);
+        }
+      }
+
+      // Скрытые 180° — общий принцип для всех редукторов
+      if (hinges === 'hidden180') {
+        // Узкая створка
+        if (W >= 445 && W <= 700 && H <= 3000) {
+          narrow = [
+            ['L1', HC - c1],
+            ['L2', H - HC - c1]
+          ];
+
+          // базовый L3: для всех трёх редукторов одинаковая формула по текущим данным
+          var baseNarrowL3 = W - 410;
+          narrow.push(['L3', baseNarrowL3]);
+
+          if (H < 2400) {
+            narrow.push(['L4', H - 180]);
+          } else {
+            narrow.push(['L4*', Math.round(H / 2) - 180]);
+          }
+
+          // ДВА отдельных значения L3* с комментариями H13 / H14
+          narrow.push([
+            'L3*',
+            baseNarrowL3 + ' — Поворотно-откидной режим (H13)'
+          ]);
+          narrow.push([
+            'L3*',
+            (baseNarrowL3 + 215) + ' — Откидно-поворотный: доп. тяга = 215 мм (H14)'
+          ]);
+        }
+
+        // Широкая створка
+        if (W >= 701 && W <= 1600 && H <= 3000) {
+          wide = [
+            ['L1', HC - c1],
+            ['L2', H - HC - c1]
+          ];
+
+          var baseWideL3;
+
+          // По таблицам для всех трёх редукторов логика одинаковая:
+          if (W <= 1200) {
+            baseWideL3 = W - 528;
+            wide.push(['L3', baseWideL3]);
+          } else {
+            baseWideL3 = W - 688;
+            wide.push(['L3*', baseWideL3]);
+          }
+
+          if (H < 2400) {
+            wide.push(['L4', Math.round(H / 2) - 180]);
+          } else {
+            wide.push(['L4*', Math.round(H / 3) - 180]);
+          }
+
+          wide.push(['L5', W - 250]);
+
+          // ДВА значения L3* с комментариями H13 / H14
+          wide.push([
+            'L3*',
+            baseWideL3 + ' — Поворотно-откидной режим (H13)'
+          ]);
+          wide.push([
+            'L3*',
+            (baseWideL3 + 215) + ' — Откидно-поворотный: доп. тяга = 215 мм (H14)'
+          ]);
+        }
+      }
+
+      // Формирование HTML
+      if (narrow) {
+        html += '<h3>&#128208; Ширина узкая</h3><ul>';
+        for (var i = 0; i < narrow.length; i++) {
+          html += '<li><b>' + narrow[i][0] + '</b> = ' + narrow[i][1] + ' мм</li>';
+        }
+        html += '</ul>';
+      }
+
+      if (wide) {
+        html += '<h3>&#128208; Ширина широкая</h3><ul>';
+        for (var j = 0; j < wide.length; j++) {
+          html += '<li><b>' + wide[j][0] + '</b> = ' + wide[j][1] + ' мм</li>';
+        }
+        html += '</ul>';
+      }
+
+      // notes оставляем на будущее, сейчас для скрытых 180° они не используются
+      for (var k = 0; k < notes.length; k++) {
+        html += '<p class="note">' + notes[k] + '</p>';
+      }
+
+      if (!narrow && !wide) {
+        html = '<p class="error">Размеры вне допустимого диапазона.</p>';
+      }
+
+      div.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
