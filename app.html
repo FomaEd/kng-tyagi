@@ -281,6 +281,25 @@
         html = '<p class="error">Размеры вне допустимого диапазона.</p>';
       }
 
+      // --- Блок картинок с доп. точками прижима ---
+      var images = [];
+
+      // Для всех типов петель, если W от 1201 до 1800
+      if (W >= 1201 && W <= 1800) {
+        images.push('img/L2 1200-1800.png');
+      }
+
+      if (images.length > 0) {
+        html += '<h3>Расположение доп. точек прижима</h3>';
+        for (var k = 0; k < images.length; k++) {
+          html += '<div style="margin-top:8px;">'
+               +  '<img src="' + images[k] + '" '
+               +  'style="max-width:100%;border-radius:8px;">'
+               +  '</div>';
+        }
+      }
+      // --- конец блока картинок ---
+
       div.innerHTML = html;
     }
   </script>
