@@ -169,9 +169,9 @@
             ['L3', W - 357]
           ];
           if (H < 2400) {
-            narrow.push(['L4', H / 2 - 180]);   // L4
+            narrow.push(['L4', H / 2 - 180]);
           } else {
-            narrow.push(['L4*', H - 800]);      // L4*
+            narrow.push(['L4*', H - 800]);
           }
         }
 
@@ -186,9 +186,9 @@
             wide.push(['L3*', W - 707]);
           }
           if (H < 2400) {
-            wide.push(['L4', H / 2 - 180]);     // L4
+            wide.push(['L4', H / 2 - 180]);
           } else {
-            wide.push(['L4*', H - 800]);        // L4*
+            wide.push(['L4*', H - 800]);
           }
           wide.push(['L5', W / 2 - 180]);
         }
@@ -196,7 +196,6 @@
 
       // Скрытые 180°
       if (hinges === 'hidden180') {
-        // Смещения для L2 по типу редуктора
         var l2Offset;
         if (reducer === 'vilka') {
           l2Offset = 170;
@@ -206,7 +205,6 @@
           l2Offset = 228;
         }
 
-        // Узкая створка 445–700
         if (W >= 445 && W <= 700 && H <= 3000) {
           narrow = [
             ['L1', HC - c1],
@@ -215,13 +213,12 @@
           ];
 
           if (H < 2400) {
-            narrow.push(['L4', H / 2 - 180]);   // L4
+            narrow.push(['L4', H / 2 - 180]);
           } else {
-            narrow.push(['L4*', H - 800]);      // L4*
+            narrow.push(['L4*', H - 800]);
           }
         }
 
-        // Широкая створка 701–1600
         if (W >= 701 && W <= 1600 && H <= 3000) {
           wide = [
             ['L1', HC - c1],
@@ -229,21 +226,19 @@
           ];
 
           if (W <= 1200) {
-            // 701–1200 → только L3 без звёздочки
             var baseL3 = W - 528;
             wide.push(['L3', baseL3]);
           } else {
-            // 1201–1600 → два L3* по формулам H13/H14
-            var l3_first  = W - 688; // H13
-            var l3_second = W - 940; // H14
+            var l3_first  = W - 688;
+            var l3_second = W - 940;
             wide.push(['L3*', l3_first  + ' мм — Поворотно-откидной режим']);
             wide.push(['L3*', l3_second + ' мм — Откидно-поворотный режим. + доп. тяга = 215 мм']);
           }
 
           if (H < 2400) {
-            wide.push(['L4', H / 2 - 180]);     // L4
+            wide.push(['L4', H / 2 - 180]);
           } else {
-            wide.push(['L4*', H - 800]);        // L4*
+            wide.push(['L4*', H - 800]);
           }
 
           wide.push(['L5', W / 2 - 250]);
